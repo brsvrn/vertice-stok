@@ -1,4 +1,9 @@
-export default function Header() {
+type HeaderProps = {
+  title?: string;
+  subtitle?: string;
+};
+
+export default function Header({ title, subtitle }: HeaderProps) {
   return (
     <header
       style={{
@@ -18,11 +23,11 @@ export default function Header() {
             fontSize: 24,
           }}
         >
-          Dashboard
+          {title ?? "Dashboard"}
         </h2>
 
         <small style={{ color: "#6B7280" }}>
-          Vertice Stok Yönetim Paneli
+          {subtitle ?? "Vertice Stok Yönetim Paneli"}
         </small>
       </div>
 

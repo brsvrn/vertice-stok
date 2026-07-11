@@ -17,9 +17,9 @@ const menu = [
   href: "/categories",
   },
   {
-    title: "Stok Girişi",
+    title: "Stok Hareketleri",
     icon: "📥",
-    href: "/stock/in",
+    href: "/stock-movements",
   },
   {
     title: "Transfer",

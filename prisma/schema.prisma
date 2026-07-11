@@ -6,3 +6,95 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model Product {
+  id              Int                 @id @default(autoincrement())
+  name            String
+  brand           String
+  unit            String              @default("Adet")
+  criticalStock   Int                 @default(0)
+  status          String              @default("ACTIVE")
+  qrCode          String              @unique
+  categoryId      Int
+  category        Category            @relation(fields: [categoryId], references: [id])
+  batches         ProductBatch[]
+  movements       StockMovement[]
+  warehouseStock  WarehouseStock?
+  inventoryItems  InventoryCountItem[]
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+}
+
+model ProductBatch {
+  id            Int               @id @default(autoincrement())
+  productId     Int
+  product       Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+  batchNumber   String
+  expiryDate    DateTime?
+  quantity      Int               @default(0)
+  warehouseName String            @default("Ana Depo")
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  movements     StockMovement[]
+
+  @@unique([productId, batchNumber])
+}
+
+model WarehouseStock {
+  id            Int      @id @default(autoincrement())
+  productId     Int      @unique
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  warehouseName String   @default("Ana Depo")
+  quantity      Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model InventoryCount {
+  id            Int                 @id @default(autoincrement())
+  title         String
+  warehouseName String
+  status        String              @default("DRAFT")
+  notes         String?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  items         InventoryCountItem[]
+}
+
+model InventoryCountItem {
+  id                Int            @id @default(autoincrement())
+  inventoryCountId  Int
+  inventoryCount    InventoryCount @relation(fields: [inventoryCountId], references: [id], onDelete: Cascade)
+  productId         Int
+  product           Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  expectedQuantity  Int            @default(0)
+  countedQuantity   Int?
+  variance          Int?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+}
+
+model StockMovement {
+  id              Int           @id @default(autoincrement())
+  movementType    String
+  productId       Int
+  product         Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  batchId         Int?
+  batch           ProductBatch? @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  quantity        Int
+  sourceWarehouse String        @default("Ana Depo")
+  targetWarehouse String        @default("Bar")
+  userName        String        @default("Sistem")
+  description     String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}

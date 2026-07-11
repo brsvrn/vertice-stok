@@ -1,54 +1,21 @@
-import Sidebar from "../../components/layout/Sidebar";
-import Header from "../../components/layout/Header";
+import AppShell from "../../components/layout/AppShell";
+import PageHeader from "../../components/layout/PageHeader";
+import CategoryManager from "../../components/categories/CategoryManager";
+import { prisma } from "../../lib/prisma";
+import { ensureDefaultCategories } from "../../lib/category-utils";
 
-export default function CategoriesPage() {
+export default async function CategoriesPage() {
+  const categories = await ensureDefaultCategories(prisma);
+  const normalizedCategories = categories.map((category) => ({
+    ...category,
+    description: category.description ?? "",
+  }));
+
   return (
-    <div
-      style={{
-        display: "flex",
-        minHeight: "100vh",
-        background: "#F1F5F9",
-      }}
-    >
-      <Sidebar />
+    <AppShell title="📂 Kategoriler" subtitle={`${normalizedCategories.length} kategori mevcut`}>
+      <PageHeader title="📂 Kategoriler" subtitle={`${normalizedCategories.length} kategori mevcut`} />
 
-      <div style={{ flex: 1 }}>
-        <Header />
-
-        <main style={{ padding: 30 }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: 20,
-            }}
-          >
-            <h1>📂 Kategoriler</h1>
-
-            <button
-              style={{
-                background: "#2563EB",
-                color: "#fff",
-                border: "none",
-                padding: "12px 18px",
-                borderRadius: 8,
-              }}
-            >
-              + Yeni Kategori
-            </button>
-          </div>
-
-          <div
-            style={{
-              background: "#fff",
-              padding: 25,
-              borderRadius: 12,
-            }}
-          >
-            Henüz kategori eklenmedi.
-          </div>
-        </main>
-      </div>
-    </div>
+      <CategoryManager initialCategories={normalizedCategories} />
+    </AppShell>
   );
 }

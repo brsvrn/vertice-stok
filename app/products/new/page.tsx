@@ -1,26 +1,26 @@
-import Sidebar from "../../../components/layout/Sidebar";
-import Header from "../../../components/layout/Header";
+import AppShell from "../../../components/layout/AppShell";
+import PageHeader from "../../../components/layout/PageHeader";
+import ProductForm from "../../../components/products/ProductForm";
+import { prisma } from "../../../lib/prisma";
+import { ensureDefaultCategories } from "../../../lib/category-utils";
 
-export default function NewProductPage() {
+export default async function NewProductPage() {
+  const categories = await ensureDefaultCategories(prisma);
+
   return (
-    <div
-      style={{
-        display: "flex",
-        minHeight: "100vh",
-        background: "#F1F5F9",
-      }}
-    >
-      <Sidebar />
+    <AppShell title="➕ Yeni Ürün" subtitle="Ürün bilgilerini ekleyin">
+      <PageHeader title="➕ Yeni Ürün" subtitle="Ürün bilgilerini ekleyin" />
 
-      <div style={{ flex: 1 }}>
-        <Header />
-
-        <main style={{ padding: 30 }}>
-          <h1>➕ Yeni Ürün</h1>
-
-          <p>Bu ekran bir sonraki adımda ürün formu ile doldurulacak.</p>
-        </main>
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: 12,
+          padding: 24,
+          boxShadow: "0 2px 8px rgba(0,0,0,.08)",
+        }}
+      >
+        <ProductForm categories={categories} />
       </div>
-    </div>
+    </AppShell>
   );
 }
