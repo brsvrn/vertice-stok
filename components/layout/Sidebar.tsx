@@ -12,6 +12,11 @@ const menu = [
     href: "/products",
   },
   {
+  title: "Kategoriler",
+  icon: "📂",
+  href: "/categories",
+},
+  {
     title: "Stok Girişi",
     icon: "📥",
     href: "/stock/in",
